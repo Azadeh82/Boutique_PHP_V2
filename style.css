@@ -1,11 +1,12 @@
-/* les deux fonts principale 
-font-family: 'Roboto', sans-serif;
-font-family: 'Alfa Slab One', cursive;*/
 
 /****** header********/
 #imgheader {
-  background-image: "./photos/header.jpg";
+  background-image: url(./photos/headerimg.png);
   background-position: center;
   background-size: cover;
-  height: 25vh;
+  height: 70vh;
+}
+
+#numberpanier {
+  width: 4em;
 }
