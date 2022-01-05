@@ -25,7 +25,8 @@ include './head.php'; ?>
       <div class="row">
 
         <?php
-        $article = getArticleFromid($_POST['articleid']);
+
+        $article = getArticleFromIdDatabase($_POST['articleid']);
         showArticle($article);
 
         ?>

@@ -1,39 +1,29 @@
 <?php
 
+// ** connexion à la base de données OK**
+
+function getConnection()
+{
+    try {
+        $db = new PDO(
+            'mysql:host=localhost;dbname=boutique_en_ligne;charset=utf8',
+            'Azadeh',
+            'Web.Pro.Job',
+            array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC)
+        );
+    } catch (Exception $e) {
+        die('Erreur : ' . $e->getMessage());
+    }
+    return $db;
+}
+
 
 function getArticles()
 {
 
-    return [
-        [
-            'name' => 'Frame Black',
-            'id' => '1',
-            'price' => 49.99,
-            'description' => 'Carrée et Simple à monter <br> (dans les differants tailles)',
-            'detailedDescription' => 'Ce cadre aux lignes épurées a été testé et peut s\'utiliser dans 
-                                      une chambre d\'enfant. La protection de face en plastique 
-                                      ne présente aucune danger.',
-            'picture' => './photos/frameBlack'
-        ],
-        [
-            'name' => 'Frame White',
-            'id' => '2',
-            'price' => 59.99,
-            'description' => 'Carrée et Simple à monter <br> (dans les differants tailles)',
-            'detailedDescription' => 'Un cadre alliant qualité et esthétique, idéal pour embellir 
-                                      vos affiches (vos photos et les de dans un style vraiment moderne !',
-            'picture' => './photos/frameWhite'
-        ],
-        [
-            'name' => 'Frame Wood',
-            'id' => '3',
-            'price' => 69.99,
-            'description' => 'Carrée et Simple à monter <br> (dans les differants tailles)',
-            'detailedDescription' => 'Ce cadre peut donc rester naturel ou si vous preferez, vous pourrez le personnaliser 
-                                      vous-même à la couleur de votre choix.!',
-            'picture' => './photos/frameWood'
-        ]
-    ];
+    $db = getConnection();
+    $query = $db->query("SELECT * FROM `articles`");
+    return $query->fetchAll();
 }
 
 
@@ -47,10 +37,10 @@ function showArticles()
         echo "
         <div class=\"col-md-4\">
         <div class=\"card m-3 border-info border-5\">
-        <img src=\""  . $article['picture'] . "\" class=\"card-img-top my-3 p-3\" alt=\"photo\">
+        <img src=\"./photos/"  . $article['image'] . "\" class=\"card-img-top my-3 p-3\" alt=\"photo\">
         <div class=\"card-body\">
-        <h5 class=\"card-title text-center fw-bolder fs-2\">" . $article['name'] . "</h5>
-        <h5 class=\"card-title text-center text-decoration-underline\"> Le pris : " . $article['price'] . "</h5>
+        <h5 class=\"card-title text-center fw-bolder fs-2\">" . $article['nom'] . "</h5>
+        <h5 class=\"card-title text-center text-decoration-underline\"> Le prix : " . $article['prix'] . "</h5>
         <p class=\"card-text text-center fst-italic fs-5\">" . $article['description'] . "</p>
         <div class=\"row\">
             <div class=\"col-md-6\">
@@ -83,6 +73,16 @@ function showArticles()
 }
 
 
+function getArticleFromIdDatabase($id)
+{
+    $db = getConnection();
+    $query = $db->prepare("SELECT * FROM `articles` WHERE id = ?");
+    $query->execute([$id]);
+    return $query->fetch();
+
+}
+
+
 function getArticleFromid($id)
 {
 
@@ -98,13 +98,13 @@ function getArticleFromid($id)
 
 function showArticle($article)
 {
-
+    
     echo "<div class=\"card col-md-5 mx-auto m-3 border-info border-5\">
-    <img src=\"" . $article['picture'] . "\" class=\"card-img-top my-3 \" alt=\"photo\">
+    <img src=\"./photos/" . $article['image'] . "\" class=\"card-img-top my-3 \" alt=\"photo\">
     <div class=\"card-body\">
-    <h5 class=\"card-title text-center fw-bolder fs-2\">" . $article['name'] . "</h5>
-    <h5 class=\"card-title text-center text-decoration-underline\"> Le pris : " . $article['price'] . "</h5>
-    <p class=\"card-text fst-italic fs-5\">" . $article['detailedDescription'] . "</p>
+    <h5 class=\"card-title text-center fw-bolder fs-2\">" . $article['nom'] . "</h5>
+    <h5 class=\"card-title text-center text-decoration-underline\"> Le prix : " . $article['prix'] . "</h5>
+    <p class=\"card-text fst-italic fs-5\">" . $article['description_detaillee'] . "</p>
     <form action=\"panier.php\" method=\"post\"> 
         <input type=\"hidden\" name=\"articleid\" value=\"" . $article['id'] . "\">
         <button type=\"submit\" class=\"btn bg-info\" style=\"color: white;\" > Ajouter au panier 
@@ -249,7 +249,7 @@ function emptypanier($showMessage = true)
 
     $_SESSION['panier'] = [];
 
-    if ($showMessage){
+    if ($showMessage) {
         echo "<script> alert(\"Le panier a bien été vidé!\");</script>";
     }
 }
