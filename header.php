@@ -17,6 +17,9 @@ include './head.php'
             <a class="nav-link active fs-3 mx-2" aria-current="page" style="color: white;" href="./index.php">Accueil</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link active fs-3 mx-3" style="color: white;" href="./gamme.php">Gammes</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link active fs-3 mx-3" style="color: white;" href="./panier.php">Panier</a>
           </li>
         </ul>

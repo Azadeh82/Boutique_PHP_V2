@@ -27,10 +27,9 @@ function getArticles()
 }
 
 
-function showArticles()
-{
 
-    $articles = getArticles();
+function showArticles($articles)
+{
 
     foreach ($articles as $article) {
 
@@ -82,22 +81,9 @@ function getArticleFromIdDatabase($id)
 }
 
 
-function getArticleFromid($id)
-{
-
-    $articles = getArticles();
-
-    foreach ($articles as $article) {
-        if ($id == $article['id']) {
-            return $article;
-        }
-    }
-}
-
-
 function showArticle($article)
 {
-    
+
     echo "<div class=\"card col-md-5 mx-auto m-3 border-info border-5\">
     <img src=\"./photos/" . $article['image'] . "\" class=\"card-img-top my-3 \" alt=\"photo\">
     <div class=\"card-body\">
@@ -116,6 +102,44 @@ function showArticle($article)
     </div>
     </div>";
 }
+
+function getGammesFromDatabase()
+{
+    $db = getConnection();
+    $query = $db->query("SELECT * FROM `gammes`");
+    return $query->fetchAll();
+}
+
+
+
+function getArticlesByGamme($id_gamme)
+{
+    $db = getConnection();
+    $query = $db->prepare("SELECT * FROM `articles` WHERE id_gamme = ?");
+    $query->execute([$id_gamme]);
+    return $query->fetchAll();
+}
+
+
+
+function showGammes()
+{
+    $gammes = getGammesFromDatabase();
+
+    foreach ($gammes as $gamme) {
+        echo "<h5 class=\"text-center fw-bolder fs-2\">" . $gamme['nom'] . "</h5>";
+           
+        $articles = getArticlesByGamme($gamme['id']);
+
+        echo"<class=\"container\">
+        <div class=\"row\">";  
+        showArticles($articles);
+        echo"</div>
+        </div>";
+
+    }
+}
+
 
 
 function addToCart($article)
