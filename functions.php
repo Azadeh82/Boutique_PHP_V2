@@ -79,7 +79,6 @@ function getArticleFromIdDatabase($id)
     $query = $db->prepare("SELECT * FROM `articles` WHERE id = ?");
     $query->execute([$id]);
     return $query->fetch();
-
 }
 
 
