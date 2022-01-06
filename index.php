@@ -9,6 +9,8 @@ include './head.php';
 
 session_start();
 
+
+
 if (!isset($_SESSION['panier'])) {
 
   $_SESSION['panier'] = [];
@@ -18,6 +20,11 @@ if (!isset($_SESSION['panier'])) {
 if (isset($_POST['commandeValidée'])) {
 
   emptypanier(false);
+}
+
+
+if (isset($_POST['inscription'])) {
+  inscriptionUtilisateur();
 }
 
 ?>

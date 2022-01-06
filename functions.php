@@ -128,17 +128,147 @@ function showGammes()
 
     foreach ($gammes as $gamme) {
         echo "<h5 class=\"text-center fw-bolder fs-2\">" . $gamme['nom'] . "</h5>";
-           
+
         $articles = getArticlesByGamme($gamme['id']);
 
-        echo"<class=\"container\">
-        <div class=\"row\">";  
+        echo "<class=\"container\">
+        <div class=\"row\">";
         showArticles($articles);
-        echo"</div>
+        echo "</div>
         </div>";
+    }
+}
+
+// ***************** vérifier champs vides ****************
+
+function checkEmptyFields()
+{
+    $champ_vide = FALSE;
+    $message = "";
+
+    foreach ($_POST as $champ => $saisie) {
+
+        if (empty($saisie)) {
+            $message .= "Vous n'avez pas rempli le champ " . $champ . "<br>";
+            $champ_vide = TRUE;
+        }
+    }
+
+    echo $message;
+    return $champ_vide;
+}
+
+// ***************** vérifier langeur des champs ****************
+
+//
+function checkLength()
+{
+    $lengthProblem = false;
+
+    if (strlen($_POST['nom']) > 25 || strlen($_POST['nom']) < 3) {
+        echo "The lenght of name input is not correct<br>";
+        $lengthProblem = true;
+    }
+
+    if (strlen($_POST['prenom']) > 25 || strlen($_POST['prenom']) < 3) {
+        echo "The lenght of prenom input is not correct<br>";
+        $lengthProblem = true;
+    }
+
+    if (strlen($_POST['email']) > 25 || strlen($_POST['email']) < 3) {
+        echo "The lenght of mail input is not correct<br>";
+        $lengthProblem = true;
+    }
+
+    if (strlen($_POST['adresse']) > 40 || strlen($_POST['adresse']) < 3) {
+        echo "The lenght of address input is not correct<br>";
+        $lengthProblem = true;
+    }
+
+    if (strlen($_POST['ville']) > 40 || strlen($_POST['ville']) < 3) {
+        echo "The lenght of city input is not correct<br>";
+        $lengthProblem = true;
+    }
+
+    if (strlen($_POST['code_postal']) !== 5) {
+        echo "The lenght of postal code input is not correct<br>";
+        $lengthProblem = true;
+    }
+
+    return $lengthProblem;
+}
+
+// ***************** vérifier si le password est sécurisé ****************
+
+
+function checkPassword() {
+   
+    $regex = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[@$!%?/&])(?=\S+$).{8,15}$^";
+    return preg_match($regex, $_POST["mot_de_passe"]);
+}
+
+
+
+
+// ***************** valider inscription utilisateur ****************
+
+function inscriptionUtilisateur()
+{
+    // 1) connexion à la base
+
+    $db = getConnection();  
+
+    // 2) vérif champs vides (créer autre fonction et l'appeler)
+
+    if (checkEmptyFields()) { // cas où au moins un champ est vide
+        return;
+
+    } else
+
+    // 3) si pas de champs vides : vérifier longueur des champs (via autre fonction)
+
+    if (checkLength()) {  //cas où au moins un input n'a pas la bonne longueur
+        return;
+
+    } else
+
+    // 4) si ok : vérifier si le password est sécurisé (via autre fonction)
+    if (!checkPassword()) {
+        echo "password is not securisé";
+
+    } else {
+
+    // 5) si ok : hasher le mot de passe (via password_hash) et inscrire l'utilisateur en base via une requête (dans la table clients)
+
+    $password = password_hash($_POST['mot_de_passe'], PASSWORD_DEFAULT);
+
+    $clients = $db->prepare("INSERT INTO clients (nom , prenom, email , mot_de_passe) VALUES (?, ?, ?, ?)");
+    $clients->execute([$_POST['nom'] , $_POST['prenom'] , $_POST['email'] , $password]);
+
+    $idClient = $db->lastInsertId();  // récupération de l'id du client créé
+
+    // 6) insérer son adresse dans la table adresses via une autre requête
+
+    $adresses = $db ->prepare("INSERT INTO adresses (id_client, adresse, code_postal, ville) VALUES (? , ?,  ?, ?)");
+    $adresses->execute([$idClient, $_POST['adresse'] , $_POST['code_postal'] , $_POST['ville']]);
+
+    //7) afficher un alert de confirmation
+
+    echo "<script> alert(\"votre inscription a bien été enregistré !\");</script>";
 
     }
 }
+
+function connection () {
+
+    
+}
+
+
+
+
+
+
 
 
 
@@ -348,4 +478,5 @@ function showDateDelivery()
 
     $date = date("Y-m-d");
     echo utf8_encode(strftime("%A %d %B %Y", strtotime($date . " + 5 days")));
+}
 }
