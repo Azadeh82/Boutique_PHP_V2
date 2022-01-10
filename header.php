@@ -25,6 +25,9 @@ include './head.php'
           <li class="nav-item">
             <a class="nav-link active fs-3 mx-3" style="color: white;" href="./inscription.php">Inscription</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link active fs-3 mx-3" style="color: white;" href="./connexion.php">connexion</a>
+          </li>
         </ul>
       </div>
     </div>

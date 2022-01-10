@@ -27,6 +27,11 @@ if (isset($_POST['inscription'])) {
   inscriptionUtilisateur();
 }
 
+if (isset($_POST['connexion'])) {
+  //var_dump($_POST);        //  1) vérifier que tu transmets bien tes infos en POST
+  connexionUtilisateur();
+}
+
 ?>
 
 <body>

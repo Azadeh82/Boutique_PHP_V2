@@ -175,7 +175,7 @@ function checkLength()
         $lengthProblem = true;
     }
 
-    if (strlen($_POST['email']) > 25 || strlen($_POST['email']) < 3) {
+    if (strlen($_POST['email']) > 40 || strlen($_POST['email']) < 3) {
         echo "The lenght of mail input is not correct<br>";
         $lengthProblem = true;
     }
@@ -201,8 +201,9 @@ function checkLength()
 // ***************** vérifier si le password est sécurisé ****************
 
 
-function checkPassword() {
-   
+function checkPassword()
+{
+
     $regex = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[@$!%?/&])(?=\S+$).{8,15}$^";
     return preg_match($regex, $_POST["mot_de_passe"]);
 }
@@ -216,53 +217,121 @@ function inscriptionUtilisateur()
 {
     // 1) connexion à la base
 
-    $db = getConnection();  
+    $db = getConnection();
 
     // 2) vérif champs vides (créer autre fonction et l'appeler)
 
     if (checkEmptyFields()) { // cas où au moins un champ est vide
         return;
-
-    } else
-
-    // 3) si pas de champs vides : vérifier longueur des champs (via autre fonction)
-
-    if (checkLength()) {  //cas où au moins un input n'a pas la bonne longueur
-        return;
-
-    } else
-
-    // 4) si ok : vérifier si le password est sécurisé (via autre fonction)
-    if (!checkPassword()) {
-        echo "password is not securisé";
-
     } else {
 
-    // 5) si ok : hasher le mot de passe (via password_hash) et inscrire l'utilisateur en base via une requête (dans la table clients)
+        // 3) si pas de champs vides : vérifier longueur des champs (via autre fonction)
 
-    $password = password_hash($_POST['mot_de_passe'], PASSWORD_DEFAULT);
+        if (checkLength()) {  //cas où au moins un input n'a pas la bonne longueur
+            return;
+        } else {
 
-    $clients = $db->prepare("INSERT INTO clients (nom , prenom, email , mot_de_passe) VALUES (?, ?, ?, ?)");
-    $clients->execute([$_POST['nom'] , $_POST['prenom'] , $_POST['email'] , $password]);
+            // 4) si ok : vérifier si le password est sécurisé (via autre fonction)
+            if (!checkPassword()) {
+                echo "password is not securisé";
+            } else {
 
-    $idClient = $db->lastInsertId();  // récupération de l'id du client créé
+                // 5) si ok : hasher le mot de passe (via password_hash) 
 
-    // 6) insérer son adresse dans la table adresses via une autre requête
+                $password = password_hash($_POST['mot_de_passe'], PASSWORD_DEFAULT);
 
-    $adresses = $db ->prepare("INSERT INTO adresses (id_client, adresse, code_postal, ville) VALUES (? , ?,  ?, ?)");
-    $adresses->execute([$idClient, $_POST['adresse'] , $_POST['code_postal'] , $_POST['ville']]);
+                
+                //inscrire l'utilisateur en base via une requête (dans la table clients)
 
-    //7) afficher un alert de confirmation
+                $clients = $db->prepare("INSERT INTO clients (nom , prenom, email , mot_de_passe) VALUES (?, ?, ?, ?)");
+                $clients->execute([$_POST['nom'], $_POST['prenom'], $_POST['email'], $password]);
 
-    echo "<script> alert(\"votre inscription a bien été enregistré !\");</script>";
+                $idClient = $db->lastInsertId();  // récupération de l'id du client créé
 
+                // 6) insérer son adresse dans la table adresses via une autre requête
+
+                $adresses = $db->prepare("INSERT INTO adresses (id_client, adresse, code_postal, ville) VALUES (? , ?,  ?, ?)");
+                $adresses->execute([$idClient, $_POST['adresse'], $_POST['code_postal'], $_POST['ville']]);
+
+                //7) afficher un alert de confirmation
+
+                echo "<script> alert(\"votre inscription a bien été enregistré !\");</script>";
+            }
+        }
     }
 }
 
-function connection () {
-
-    
+function recupereClient() // recuperer client 
+{
+    $db = getConnection();
+    $recupereClient = $db->prepare("SELECT * FROM `clients` WHERE email = ?");
+    $recupereClient->execute([$_POST['email']]);
+    return $recupereClient->fetch(); //on retourne le résultat : les infos du client;
 }
+
+
+function checkPasswordConnexion($password)
+{
+    return password_verify($_POST['mot_de_passe'], $password);
+}
+
+
+function getAdressesClient()
+{
+    $db = getConnection();
+        $adresses = $db->prepare("SELECT * FROM `adresses` WHERE id_client = ?");
+        $adresses->execute([$_SESSION['infosClient']['id']]);
+        return $adresses->fetch();
+}
+
+function connexionUtilisateur()
+{
+
+    // 1) connexion à la base
+    $db = getConnection();
+    
+
+    // 2) vérif champs vides (créer autre fonction et l'appeler)
+    if (checkEmptyFields()) { // cas où au moins un champ est vide
+        return;
+    } else {
+
+        //   3) vérifier si l'email existe => requête qui va chercher les infos de la table client là où il y a l'email donné
+
+        $infosClient = recupereClient();
+
+        if (!$infosClient) { // si le client existe, cette fonction renvoie un résultat => évalué à true
+            // si il n'existe pas => cette fonction ne renvoie rien => évalué à false
+            // si rien n'est renvoyé => message d'erreur et return => on sort de la fonction.
+            //  4) si cela ne retourne rien => mail pas bon => erreur
+            echo "<script> alert(\"votre adreese mail n'est pas bon !\");</script>";
+        } else {
+            //   5) si ça retourne des infos => comparer mdp saisi avec celui présent dans les infos récupérés
+            //   6) si mdp correct => on connecte l'utilisateur et on stocke ses infos dans la session
+            if (checkPasswordConnexion($infosClient['mot_de_passe'])) {
+                $_SESSION['infosClient'] = $infosClient;
+                $adressesClient = getAdressesClient();
+                $_SESSION['adresseClient'] = $adressesClient;
+                echo '<script>alert("Vous êtes connecté !")</script>';
+                echo "Bonjour " . $infosClient['prenom'] . $infosClient['nom'] . "<br> vous êtes bien connecté à votre compte. ";
+            } else {
+                //   7) si mdp pas bon => on renvoie une erreur
+                echo "<script> alert(\"votre mot de passe n'est pas bon !\");</script>";
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -337,6 +406,7 @@ function showArticesPanier($pageName)
         </div>";
     }
 }
+
 
 
 function changeQuantity($id, $quantity)
@@ -478,5 +548,4 @@ function showDateDelivery()
 
     $date = date("Y-m-d");
     echo utf8_encode(strftime("%A %d %B %Y", strtotime($date . " + 5 days")));
-}
 }

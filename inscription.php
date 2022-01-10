@@ -22,7 +22,7 @@ session_start();
       <span class="placeholder col-12 bg-info bg-opacity-75"></span>
     </p>
 
-    <h2 class="text-center fst-italic fs-1 my-3">BIENVENUE</h2>
+    <h2 class="text-center fst-italic fs-1 my-3">INSCRIPTION</h2>
 
     <p class="placeholder-wave">
       <span class="placeholder col-12 bg-info bg-opacity-75"></span>
@@ -57,7 +57,7 @@ session_start();
               </div>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-6">
               <label for="validationCustom05" class="form-label">Mot de passe</label>
               <!--**********indique encryter pour mot de pass************-->
               <small id="emailHelp" class="form-text text-muted">Entre 8 et 15 caractères, minimum 1 lettre, 1 chiffre et 1 caractère spécial</small>
@@ -86,9 +86,6 @@ session_start();
             <div class="col-md-3">
               <label for="validationCustom05" class="form-label">Ville</label>
               <input required type="text" class="form-control"  name="ville">
-              <div class="invalid-feedback">
-                Please provide a valid zip.
-              </div>
             </div>
 
             <div class="col-12 text-center">

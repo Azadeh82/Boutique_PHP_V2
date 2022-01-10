@@ -49,7 +49,7 @@ if (isset($_POST['emptyPanier'])) {
       <span class="placeholder col-12 bg-info bg-opacity-75"></span>
     </p>
 
-    <h2 class="text-center fst-italic fs-1 my-3"> Votre panier </h2>
+    <h2 class="text-center fst-italic fs-1 my-3"> PANIER </h2>
     
     <p class="placeholder-wave">
       <span class="placeholder col-12 bg-info bg-opacity-75"></span>
