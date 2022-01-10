@@ -33,7 +33,7 @@ session_start();
         <div class="col">
 
           <form method="POST" action="./index.php" class="row g-3">
-            <input type="hidden" name="connexion" value="true">  
+            <input type="hidden" name="connexion" value="true">
             <div class="col-md-6">
               <label for="validationCustom03" class="form-label">Mail</label>
               <input required type="email" class="form-control" name="email">
@@ -48,20 +48,15 @@ session_start();
               <button class="btn btn-info" type="submit">connexion</button>
             </div>
           </form>
-
         </div>
-
-
-        <div class="container text-center mt-5">
-          <h3>Pas encore inscrit ?</h3>
-          <a href="./inscription.php"><button class="btn btn-info"> Je crée mon compt</button></a>
-        </div>
-
-      </div>
-
       </div>
     </div>
 
+
+    <div class="container text-center mt-5">
+      <h3>Pas encore inscrit ?</h3>
+      <a href="./inscription.php"><button class="btn btn-info"> Je crée mon compte</button></a>
+    </div>
 
   </main>
 

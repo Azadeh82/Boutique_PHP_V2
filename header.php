@@ -22,12 +22,29 @@ include './head.php'
           <li class="nav-item">
             <a class="nav-link active fs-3 mx-3" style="color: white;" href="./panier.php">Panier</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link active fs-3 mx-3" style="color: white;" href="./inscription.php">Inscription</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active fs-3 mx-3" style="color: white;" href="./connexion.php">connexion</a>
-          </li>
+        
+          <?php 
+          if (!isset ($_SESSION['infosClient'])) {
+           echo" <li class=\"nav-item\">
+            <a class=\"nav-link active fs-3 mx-3\" style=\"color: white;\" href=\"./inscription.php\">Inscription</a>
+          </li>";
+            echo "<li class=\"nav-item\">
+              <a class=\"nav-link active fs-3 mx-3\" style=\"color: white;\" href=\"./connexion.php\">connexion</a>
+            </li>";
+          } else {
+
+              echo "<li class=\"nav-item\">
+                <a class=\"nav-link active fs-3 mx-3\" style=\"color: white;\" href=\"./account.php\">Mon Compte</a>
+              </li>";
+ 
+              echo "<li class=\"nav-item nav-link active fs-3 mx-3\">
+              <form method=\"POST\" action=\"./index.php\">
+                <input type=\"hidden\" name=\"deconnexion\">
+                <input style=\"border: none; color: white;\" class=\"bg-info bg-opacity-10\" type=\"submit\" value=\"Déconnexion\">
+              </form>
+              </li>";
+            }
+          ?>
         </ul>
       </div>
     </div>

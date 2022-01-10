@@ -322,6 +322,10 @@ function connexionUtilisateur()
     }
 }
 
+function deconnexion() {
+    $_SESSION = [];
+}
+
 
 
 

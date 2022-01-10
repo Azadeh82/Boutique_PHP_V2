@@ -32,6 +32,10 @@ if (isset($_POST['connexion'])) {
   connexionUtilisateur();
 }
 
+if (isset ($_POST['deconnexion'])) {
+  deconnexion();
+} 
+
 ?>
 
 <body>
