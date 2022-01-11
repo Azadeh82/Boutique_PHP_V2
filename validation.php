@@ -22,6 +22,14 @@ if (isset($_POST['articleToDeleteId'])) {
   deleteArticle($_POST['articleToDeleteId']);
 }
 
+if (isset($_POST['modifInfo'])) {
+  changeInfos();
+}
+
+if (isset($_POST['modifAdresse'])) {
+  changeAdresse();
+}
+
 ?>
 
 <body>
@@ -83,6 +91,28 @@ if (isset($_POST['articleToDeleteId'])) {
 
           <?php
           showFinalPayment();
+          ?>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid text-center">
+      <div class="row">
+        <div class="col">
+          <?php
+          showInfosClient('validation.php')
+          ?>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid text-center">
+      <div class="row">
+        <div class="col">
+          <?php
+          showAdresseClient('validation.php')
           ?>
 
         </div>

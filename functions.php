@@ -160,52 +160,67 @@ function checkEmptyFields()
 
 // ***************** vérifier langeur des champs ****************
 
-//
 function checkLength()
 {
     $lengthProblem = false;
 
-    if (strlen($_POST['nom']) > 25 || strlen($_POST['nom']) < 3) {
-        echo "The lenght of name input is not correct<br>";
-        $lengthProblem = true;
+    if (isset($_POST['nom'])) {
+        if (strlen($_POST['nom']) > 25 || strlen($_POST['nom']) < 3) {
+            echo "The lenght of name input is not correct<br>";
+            $lengthProblem = true;
+        }
     }
 
-    if (strlen($_POST['prenom']) > 25 || strlen($_POST['prenom']) < 3) {
-        echo "The lenght of prenom input is not correct<br>";
-        $lengthProblem = true;
+    if (isset($_POST['prenom'])) {
+        if (strlen($_POST['prenom']) > 25 || strlen($_POST['prenom']) < 3) {
+            echo "The lenght of prenom input is not correct<br>";
+            $lengthProblem = true;
+        }
     }
 
-    if (strlen($_POST['email']) > 40 || strlen($_POST['email']) < 3) {
-        echo "The lenght of mail input is not correct<br>";
-        $lengthProblem = true;
+    if (isset($_POST['email'])) {
+        if (strlen($_POST['email']) > 40 || strlen($_POST['email']) < 3) {
+            echo "The lenght of mail input is not correct<br>";
+            $lengthProblem = true;
+        }
     }
 
-    if (strlen($_POST['adresse']) > 40 || strlen($_POST['adresse']) < 3) {
-        echo "The lenght of address input is not correct<br>";
-        $lengthProblem = true;
+    if (isset($_POST['adresse'])) {
+        if (strlen($_POST['adresse']) > 40 || strlen($_POST['adresse']) < 3) {
+            echo "The lenght of address input is not correct<br>";
+            $lengthProblem = true;
+        }
     }
 
-    if (strlen($_POST['ville']) > 40 || strlen($_POST['ville']) < 3) {
-        echo "The lenght of city input is not correct<br>";
-        $lengthProblem = true;
+    if (isset($_POST['ville'])) {
+        if (strlen($_POST['ville']) > 40 || strlen($_POST['ville']) < 3) {
+            echo "The lenght of city input is not correct<br>";
+            $lengthProblem = true;
+        }
     }
 
-    if (strlen($_POST['code_postal']) !== 5) {
-        echo "The lenght of postal code input is not correct<br>";
-        $lengthProblem = true;
+    if (isset($_POST['code_postal'])) {
+        if (strlen($_POST['code_postal']) !== 5) {
+            echo "The lenght of postal code input is not correct<br>";
+            $lengthProblem = true;
+        }
     }
 
     return $lengthProblem;
 }
 
+// ***************** vérifier caracter de nom et prenom  ****************
+
+
+
 // ***************** vérifier si le password est sécurisé ****************
 
 
-function checkPassword()
+function checkPassword($password)
 {
 
     $regex = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[@$!%?/&])(?=\S+$).{8,15}$^";
-    return preg_match($regex, $_POST["mot_de_passe"]);
+    return preg_match($regex, $password);
 }
 
 
@@ -240,7 +255,7 @@ function inscriptionUtilisateur()
 
                 $password = password_hash($_POST['mot_de_passe'], PASSWORD_DEFAULT);
 
-                
+
                 //inscrire l'utilisateur en base via une requête (dans la table clients)
 
                 $clients = $db->prepare("INSERT INTO clients (nom , prenom, email , mot_de_passe) VALUES (?, ?, ?, ?)");
@@ -279,9 +294,9 @@ function checkPasswordConnexion($password)
 function getAdressesClient()
 {
     $db = getConnection();
-        $adresses = $db->prepare("SELECT * FROM `adresses` WHERE id_client = ?");
-        $adresses->execute([$_SESSION['infosClient']['id']]);
-        return $adresses->fetch();
+    $adresses = $db->prepare("SELECT * FROM `adresses` WHERE id_client = ?");
+    $adresses->execute([$_SESSION['infosClient']['id']]);
+    return $adresses->fetch();
 }
 
 function connexionUtilisateur()
@@ -289,7 +304,7 @@ function connexionUtilisateur()
 
     // 1) connexion à la base
     $db = getConnection();
-    
+
 
     // 2) vérif champs vides (créer autre fonction et l'appeler)
     if (checkEmptyFields()) { // cas où au moins un champ est vide
@@ -312,7 +327,7 @@ function connexionUtilisateur()
                 $_SESSION['infosClient'] = $infosClient;
                 $adressesClient = getAdressesClient();
                 $_SESSION['adresseClient'] = $adressesClient;
-                echo '<script>alert("Vous êtes connecté !")</script>';
+                echo "<script>alert('Vous êtes connecté !')</script>";
                 echo "Bonjour " . $infosClient['prenom'] . $infosClient['nom'] . "<br> vous êtes bien connecté à votre compte. ";
             } else {
                 //   7) si mdp pas bon => on renvoie une erreur
@@ -322,24 +337,191 @@ function connexionUtilisateur()
     }
 }
 
-function deconnexion() {
+
+//************************* deconnecter client à son compte ************/
+
+function deconnexion()
+{
     $_SESSION = [];
+    echo "<script>alert('Vous êtes Déconnecté !')</script>";
+}
+
+
+// **************** Changer des information de clients **********************//
+
+function changeInfos()
+{
+
+    if (checkEmptyFields()) {
+        return;
+    } else {
+        if (checkLength()) {
+            return;
+        } else {
+            $db = getConnection();
+
+            $nom = strip_tags($_POST['nom']);
+            $prenom = strip_tags($_POST['prenom']);
+            $email = strip_tags($_POST['email']);
+
+            $query = $db->prepare("UPDATE clients SET nom = :nom , prenom = :prenom , email = :email WHERE id = :id");
+            $query->execute(array(
+                "nom" => $nom,
+                "prenom" => $prenom,
+                "email" => $email,
+                "id" => $_SESSION['infosClient']['id']
+            ));
+
+            $_SESSION['infosClient']['nom'] = $nom;
+            $_SESSION['infosClient']['prenom'] = $prenom;
+            $_SESSION['infosClient']['email'] = $email;
+
+            echo "<script>alert('Changements validés !')</script>";
+        }
+    }
+}
+
+// **************** Changer Adresse de clients **********************//
+
+function changeAdresse()
+{
+
+    if (checkEmptyFields()) {
+        return;
+    } else {
+        if (checkLength()) {
+            return;
+        } else {
+            $db = getConnection();
+
+            $adresse = strip_tags($_POST['adresse']);
+            $code_postal = strip_tags($_POST['code_postal']);
+            $ville = strip_tags($_POST['ville']);
+
+            $query = $db->prepare("UPDATE adresses SET adresse = :adresse , code_postal = :code_postal , ville = :ville WHERE id_client = :id_client");
+            $query->execute(array(
+                "adresse" => $adresse,
+                "code_postal" => $code_postal,
+                "ville" => $ville,
+                "id_client" => $_SESSION['infosClient']['id']
+            ));
+
+            $_SESSION['adresseClient']['adresse'] = $adresse;
+            $_SESSION['adresseClient']['code_postal'] = $code_postal;
+            $_SESSION['adresseClient']['ville'] = $ville;
+
+            echo "<script>alert('Changements validés !')</script>";
+        }
+    }
+}
+
+// **************** Changer Adresse de clients **********************//
+
+// 0) créer page updatePassword.php : formulaire avec actuel + nouveau mdp
+// 1)  // on vérifie d'abord si il n'y a pas de champs vides. Si oui, message d'erreur et fin de la fonction.
+// 2) // on récupère le mdp actuel en base (hashé)
+// 3)   // on vérifie le mdp actuel saisi (en clair) par rapport à l'actuel en base (hashé) avec password_verify()
+// 4) // si mdp actuel saisi = mdp actuel en base, on passe à la suite. Sinon fin de la fonction et message d'erreur
+// 5)   // on nettoie le nouveau mdp choisi avec strip_tags() (facultatif)
+// 6)    // on vérifie que le nouveau mdp choisi respecte la regex (avec fonction déjà créée). Si pas bon => sortie et message d'erreur
+// 7)     //si nouveau mdp ok => on le sauvegarde en le hâchant avec password_hash()
+
+
+function changePassword()
+{
+    if (checkEmptyFields()) {
+        return;
+    } else {
+
+        $oldPasswordDatabas = $_SESSION['infosClient']['mot_de_passe'];
+
+
+        if (password_verify($_POST['oldPassword'], $oldPasswordDatabas)) {
+
+            $newPassword = strip_tags($_POST['newPassword']);
+
+            if (checkPassword($newPassword)) {
+
+                $newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+                $_SESSION['infosClient']['mot_de_passe'] = $newPassword;
+
+                $db = getConnection();
+
+                $query = $db->prepare("UPDATE clients SET mot_de_passe = ? WHERE id = ?");
+                // $query = $db->prepare("UPDATE clients SET mot_de_passe = :password WHERE id = :id")
+                $query->execute(
+                    array(
+                        $newPassword,
+                        $_SESSION['infosClient']['id']
+                    )
+                );
+
+                echo "<script> alert(\"new password saved!\");</script>";
+            } else {
+
+                echo "<div class=\"container w-50 text-center p-3 mt-2 bg-danger\"> Attention : sécurité du mot de passe insuffisante !</div>";
+            }
+        } else {
+
+            echo "votre mot de passe actuel n'est pas correct!";
+        }
+    }
+}
+
+
+function showInfosClient($pageName)
+{
+    echo "<form method=\"POST\" class=\"row g-3\" action=\"". $pageName . "\">
+    <input type=\"hidden\" name=\"modifInfo\" value=\"changeInformation\">
+    <div class=\"col-md-4\">
+      <label for=\"validationCustom01\" class=\"form-label\">Nom</label>
+      <input required type=\"text\" class=\"form-control\" name=\"nom\" value=\"" . $_SESSION['infosClient']['nom'] . "\">
+    </div>
+    <div class=\"col-md-4\">
+      <label for=\"validationCustom02\" class=\"form-label\">Prenom</label>
+      <input required type=\"text\" class=\"form-control\" name=\"prenom\" value=\"" . $_SESSION['infosClient']['prenom'] . "\">
+    </div>
+
+    <div class=\"col-md-6\">
+      <label for=\"validationCustom03\" class=\"form-label\">Mail</label>
+      <input required type=\"email\" class=\"form-control\" name=\"email\" value=\"" . $_SESSION['infosClient']['email'] . "\">
+    </div>
+
+    <div class=\"col-12 text-center\">
+      <button class=\"btn btn-info\" type=\"submit\">modifier mes infomations</button>
+    </div>
+  </form>";
 }
 
 
 
+function showAdresseClient($pageName)
+{
+    echo "<form method=\"POST\" class=\"row g-3\" action=\"". $pageName . "\">
+            <input type=\"hidden\" name=\"modifAdresse\" value=\"changeAdresse\">
 
+            <div class=\"col-md-6\">
+              <label for=\"validationCustom03\" class=\"form-label\">Adresse</label>
+              <input required type=\"text\" class=\"form-control\" name=\"adresse\" value=\"" . $_SESSION['adresseClient']['adresse'] . "\">
 
+            </div>
 
+            <div class=\"col-md-3\">
+              <label for=\"validationCustom05\" class=\"form-label\">Code postal</label>
+              <input required type=\"text\" class=\"form-control\" name=\"code_postal\" value=\"" . $_SESSION['adresseClient']['code_postal'] . "\">
+            </div>
 
+            <div class=\"col-md-3\">
+              <label for=\"validationCustom05\" class=\"form-label\">Ville</label>
+              <input required type=\"text\" class=\"form-control\" name=\"ville\" value=\"" . $_SESSION['adresseClient']['ville'] . "\">
+            </div>
 
-
-
-
-
-
-
-
+            <div class=\"col-12 text-center\">
+              <button class=\"btn btn-info\" type=\"submit\">modifier mon adresse</button>
+            </div>
+          </form>";
+}
 
 
 
@@ -370,18 +552,18 @@ function showArticesPanier($pageName)
         echo "<div class=\"card border-info border-5 my-5 p-3\"><div class=\"row \">
 
                 <div class=\"col-md-3 my-auto\">
-                    <img src=\"" . $articlePanier['picture'] . "\" class=\"img-fluid rounded-start\" alt=\"photoArticle\" >
+                    <img src=\"" . $articlePanier['image'] . "\" class=\"img-fluid rounded-start\" alt=\"photoArticle\" >
                 </div>
 
                 <div class=\"card col-md-4 my-auto\">
                     <div class=\"card-body\">
-                    <h5 class=\"card-title fw-bolder fs-2\"> " . $articlePanier['name'] . "</h5>
+                    <h5 class=\"card-title fw-bolder fs-2\"> " . $articlePanier['nom'] . "</h5>
                     <p class=\"card-text fst-italic fs-5\">" . $articlePanier['description'] . "</p>
                     </div>
                 </div>
 
                 <div class=\"card col-md-1 my-auto text-decoration-underline text-center border-0\">
-                    <h5> " . $articlePanier['price'] . "</h5>
+                    <h5> " . $articlePanier['prix'] . "</h5>
                 </div>
 
                 <div class= \"card col-md-3 my-auto border-0\">
@@ -448,7 +630,7 @@ function totalPurchases()
 
         foreach ($_SESSION['panier'] as $articlePanier) {
 
-            $totalPurchases += $articlePanier['quantity'] * $articlePanier['price'];
+            $totalPurchases += $articlePanier['quantity'] * $articlePanier['prix'];
         }
     }
 

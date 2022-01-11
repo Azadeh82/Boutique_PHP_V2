@@ -8,7 +8,7 @@ include './head.php';
 // ajout au panier
 if (isset($_POST['articleid'])) {
 
-  $articlePanier = getArticleFromid($_POST['articleid']);
+  $articlePanier = getArticleFromIdDatabase($_POST['articleid']);
 
   addToCart($articlePanier);
 }

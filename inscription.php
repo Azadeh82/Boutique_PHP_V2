@@ -37,24 +37,15 @@ session_start();
             <div class="col-md-4">
               <label for="validationCustom01" class="form-label">Nom</label>
               <input required type="text" class="form-control" name="nom">
-              <div class="valid-feedback">
-                Looks good!
-              </div>
             </div>
             <div class="col-md-4">
               <label for="validationCustom02" class="form-label">Prenom</label>
               <input required type="text" class="form-control" name="prenom">
-              <div class="valid-feedback">
-                Looks good!
-              </div>
             </div>
 
             <div class="col-md-6">
               <label for="validationCustom03" class="form-label">Mail</label>
               <input required type="email" class="form-control" name="email">
-              <div class="invalid-feedback">
-                Please provide a valid city.
-              </div>
             </div>
 
             <div class="col-md-6">
@@ -62,25 +53,17 @@ session_start();
               <!--**********indique encryter pour mot de pass************-->
               <small id="emailHelp" class="form-text text-muted">Entre 8 et 15 caractères, minimum 1 lettre, 1 chiffre et 1 caractère spécial</small>
               <input required type="password" class="form-control" name="mot_de_passe">
-              <div class="invalid-feedback">
-                Please provide a valid zip.
-              </div>
             </div>
 
             <div class="col-md-6">
               <label for="validationCustom03" class="form-label">Adresse</label>
               <input required type="text" class="form-control" name="adresse">
-              <div class="invalid-feedback">
-                Please provide a valid city.
-              </div>
+
             </div>
 
             <div class="col-md-3">
               <label for="validationCustom05" class="form-label">Code postal</label>
               <input required type="text" class="form-control" name="code_postal">
-              <div class="invalid-feedback">
-                Please provide a valid zip.
-              </div>
             </div>
 
             <div class="col-md-3">
