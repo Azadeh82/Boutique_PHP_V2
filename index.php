@@ -18,7 +18,7 @@ if (!isset($_SESSION['panier'])) {
 
 
 if (isset($_POST['commandeValidée'])) {
-
+  saveOrder();
   emptypanier(false);
 }
 

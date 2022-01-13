@@ -50,7 +50,7 @@ if (isset($_POST['emptyPanier'])) {
     </p>
 
     <h2 class="text-center fst-italic fs-1 my-3"> PANIER </h2>
-    
+
     <p class="placeholder-wave">
       <span class="placeholder col-12 bg-info bg-opacity-75"></span>
     </p>
@@ -90,15 +90,20 @@ if (isset($_POST['emptyPanier'])) {
           <form method="post" action="panier.php">
             <button class="btn btn-danger mt-5 mb-4" type="submit" name="emptyPanier">vider panier</button>
           </form>
-  
-          <?php
-          if (count($_SESSION['panier']) > 0) {
 
-          echo"<a href=\"./validation.php\"> <button class=\"btn btn-info mt-3 mb-5\" style=\"color: white;\"  
+          <?php
+          if (isset($_SESSION['infosClient']) && count($_SESSION['panier']) > 0) {
+
+            echo "<a href=\"./validation.php\"> <button class=\"btn btn-info mt-3 mb-5\" style=\"color: white;\"  
           type=\"submit\" name=\"validerCommand\"> valider la commande </button></a>";
-          
           }
-        ?>
+
+          if (!isset($_SESSION['infosClient']) && count($_SESSION['panier']) > 0) {
+
+            echo "<a href=\"./connexion.php\"> <button class=\"btn btn-info mt-3 mb-5\" style=\"color: white;\"  
+          type=\"submit\" name=\"validerCommand\"> Connectez à votre compte</button></a>";
+          }
+          ?>
         </div>
       </div>
 

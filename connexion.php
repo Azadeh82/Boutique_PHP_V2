@@ -45,7 +45,7 @@ session_start();
             </div>
 
             <div class="col-12 text-center mb-5">
-              <button class="btn btn-info" type="submit">connexion</button>
+              <button class="btn btn-info" style="color: white;" type="submit">connexion</button>
             </div>
           </form>
         </div>
@@ -55,7 +55,7 @@ session_start();
 
     <div class="container text-center mt-5">
       <h3>Pas encore inscrit ?</h3>
-      <a href="./inscription.php"><button class="btn btn-info"> Je crée mon compte</button></a>
+      <a href="./inscription.php"><button class="btn btn-info mb-4" style="color: white;"> Je crée mon compte</button></a>
     </div>
 
   </main>

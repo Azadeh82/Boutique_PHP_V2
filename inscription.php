@@ -51,7 +51,7 @@ session_start();
             <div class="col-md-6">
               <label for="validationCustom05" class="form-label">Mot de passe</label>
               <!--**********indique encryter pour mot de pass************-->
-              <small id="emailHelp" class="form-text text-muted">Entre 8 et 15 caractères, minimum 1 lettre, 1 chiffre et 1 caractère spécial</small>
+              <small id="emailHelp" class="form-text text-muted">Entre 8et15 caractères,minimum 1lettre, 1chiffre et 1caractère spécial</small>
               <input required type="password" class="form-control" name="mot_de_passe">
             </div>
 
@@ -72,7 +72,7 @@ session_start();
             </div>
 
             <div class="col-12 text-center">
-              <button class="btn btn-info" type="submit">Inscrire</button>
+              <button class="btn btn-info" type="submit" style="color: white";>Inscrire</button>
             </div>
           </form>
 

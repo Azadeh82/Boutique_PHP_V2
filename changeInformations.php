@@ -14,7 +14,6 @@ session_start();
   if (isset($_POST['modifInfo'])) {
     changeInfos();
   }
-
   ?>
 
   <main>

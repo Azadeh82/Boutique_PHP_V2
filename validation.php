@@ -97,13 +97,12 @@ if (isset($_POST['modifAdresse'])) {
       </div>
     </div>
 
-    <div class="container-fluid text-center">
-      <div class="row">
+    <div class="container-fluid text-center my-5">
+      <div class="row ">
         <div class="col">
           <?php
           showInfosClient('validation.php')
           ?>
-
         </div>
       </div>
     </div>
